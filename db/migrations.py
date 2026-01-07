@@ -1,4 +1,13 @@
-from models.models import CategoryRule 
+from models.models import CategoryRule, Category
+
+#categories
+#Food & Dining
+#Transportation
+#Health & Wellness
+#Shopping
+#Groceries
+#Services
+
 
 def migrate_database(db):
     """Handle database migrations for existing installations"""
@@ -29,6 +38,26 @@ def migrate_database(db):
         except Exception as e:
             print(f"Warning: Could not create CategoryRule table: {e}")
     
+    if Category.query.count() == 0:
+        print("Creating default categories...")
+        try:
+            categories = [
+                    Category(category='Food & Dining'),
+                    Category(category='Transportation'),
+                    Category(category='Services'),
+                    Category(category='Shopping'),
+                    Category(category='Groceries'),
+                    Category(category='Health & Wellness'),
+                    ]
+            for category in categories:
+                db.session.add(category)
+
+            db.session.commit()
+            print("created default categories.")
+        except Exception as e:
+            print(f"Warning: Could not create default categories: {e}")
+
+
     # Create some default category rules if none exist
     if CategoryRule.query.count() == 0:
         print("Creating default category rules...")
@@ -55,3 +84,5 @@ def migrate_database(db):
             print(f"Created {len(default_rules)} default category rules!")
         except Exception as e:
             print(f"Warning: Could not create default rules: {e}")
+
+    

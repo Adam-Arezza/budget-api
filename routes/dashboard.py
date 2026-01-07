@@ -2,14 +2,16 @@ from flask import Blueprint, jsonify, request
 from models.models import Purchase 
 from db.db import db
 from services.categorize import auto_categorize_purchase
+import datetime
 
 dashboard_bp = Blueprint("dashboard", __name__)
 
 @dashboard_bp.route('/')
 def dashboard():
     # Get current month's purchases
-    current_month = datetime.now().replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    current_month = datetime.datetime.now().replace(day=1, hour=0, minute=0, second=0, microsecond=0)
     purchases = Purchase.query.filter(Purchase.date >= current_month).order_by(Purchase.date.desc()).all()
+
     # Calculate totals
     total_spent = sum(p.amount for p in purchases)
     
@@ -17,16 +19,17 @@ def dashboard():
     categories = db.session.query(Purchase.category, db.func.sum(Purchase.amount)).filter(
         Purchase.date >= current_month
     ).group_by(Purchase.category).all()
+
     
     # Get recent purchases for the table
     recent_purchases = Purchase.query.order_by(Purchase.date.desc()).limit(10).all()
-    day = date.today().day
+    day = datetime.date.today().day
 
     dashboard_data = {
-            "purchases": purchases,
+            "purchases":[p.to_dict() for p in purchases],
             "total_spent": total_spent,
-            "categories": categories,
-            "recent_purchases": recent_purchases,
+            "categories": [{"category":c,"total":t} for c,t in categories],
+            "recent_purchases":[rp.to_dict() for rp in recent_purchases],
             "day": day
             }
 

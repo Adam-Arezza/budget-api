@@ -1,4 +1,5 @@
 from flask import Blueprint, jsonify, request
+from db.db import db
 from models.models import Budget
 
 

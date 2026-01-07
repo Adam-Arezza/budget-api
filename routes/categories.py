@@ -1,17 +1,13 @@
 from flask import Blueprint, jsonify, request
-from models.models import CategoryRule
+from models.models import CategoryRule, Category
 
 
 category_bp = Blueprint("category_rules", __name__)
 
-@category_bp.route('/category-rules')
-def category_rules():
-    rules = CategoryRule.query.order_by(CategoryRule.priority.desc()).all()
-    return jsonify(
-            {
-                "rules":[rule.to_dict() for rule in rules]
-                }
-            )
+@category_bp.route('/api/categories', methods=['GET'])
+def get_categories():
+    categories = Category.query.all()
+    return jsonify([{"id":category.id,"category":category.category} for category in categories])
 
 @category_bp.route('/api/category-rules', methods=['GET'])
 def get_category_rules():

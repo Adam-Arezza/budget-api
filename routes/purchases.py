@@ -6,15 +6,6 @@ from models.models import Purchase
 sync_service = SyncService(db=db)
 purchase_bp = Blueprint("purchases", __name__)
 
-@purchase_bp.route('/purchases')
-def purchases():
-    page = request.args.get('page', 1, type=int)
-    purchases = Purchase.query.order_by(Purchase.date.desc()).all()
-    return jsonify(
-            {
-                "purchases":[p.to_dict() for p in purchases]
-            })
-
 @purchase_bp.route('/purchases_sync')
 def sync_purchases():
     try:
@@ -92,7 +83,7 @@ def get_purchase(purchase_id):
     })
 
 @purchase_bp.route('/api/purchases/<int:purchase_id>', methods=['PUT'])
-def update_purchase(purchase_id):
+def update_purchase_category(purchase_id):
     purchase = Purchase.query.get_or_404(purchase_id)
     data = request.json
     

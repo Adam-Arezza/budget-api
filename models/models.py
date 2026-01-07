@@ -55,3 +55,6 @@ class Budget(db.Model):
                 "monthly_limit":self.monthly_limit
                 }
 
+class Category(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    category = db.Column(db.String(100), unique=True, nullable=False)
